@@ -10,7 +10,6 @@ import 'package:todo_internship_algoriza/features/tasks/domain/repositories/task
 
 
 
-
 class TasksRepositoryImpl implements TasksRepository{
 
 final TasksLocalDataSource tasksLocalDataSource;
@@ -61,21 +60,9 @@ TasksRepositoryImpl({required this.tasksLocalDataSource});
   }
 
   @override
-  Future<Either<Failure, Unit>> updateTask(TaskEntity task) async{
-    final TaskModel taskModel = TaskModel(
-      id: task.id,
-      startTime: task.startTime,
-      taskTitle: task.taskTitle,
-      color: task.color,
-      date: task.date,
-      endTime: task.endTime,
-      isCompleted: task.isCompleted,
-      isFavorite: task.isFavorite,
-      remind: task.remind,
-      repeat: task.repeat,
-    );
+  Future<Either<Failure, Unit>> updateTask({ int? isCompleted,  int? isFavorite,  int? id}) async{
     try{
-      await tasksLocalDataSource.updateTask(taskModel);
+      await tasksLocalDataSource.updateTask(isCompleted:isCompleted ,isFavorite: isFavorite,id:id );
       return right(unit);
     }on UpdateDataException {
       return Left(UpdateDataFailure());

@@ -34,9 +34,6 @@ class TasksCubit extends Cubit<TasksState> {
   final TextEditingController? startTimeController = TextEditingController();
   final TextEditingController? endTimeController = TextEditingController();
 
-  // int? color ;
-
-////////////////
   DateTime selectedDateSchedule = DateTime.now();
   String strDateSchedule = DateFormat.yMd().format(DateTime.now());
   getSelectedDateSchedule(date) {
@@ -48,17 +45,16 @@ class TasksCubit extends Cubit<TasksState> {
     getFiltrationTask(filtration: Filtration.isDate);
   }
 
-///////
- late  List<TaskEntity> filtrationTask;
-  getFiltrationTask(
-      {Filtration? filtration,
-      int? isCompleted,
-      int? isFavorite,
-       })  async {
+  late List<TaskEntity> filtrationTask;
+  getFiltrationTask({
+    Filtration? filtration,
+    int? isCompleted,
+    int? isFavorite,
+  }) async {
     switch (filtration) {
       case Filtration.isCompleted:
         emit(FiltrationDataLoadingState());
-        filtrationTask =  allTasks
+        filtrationTask = allTasks
             .where((element) => element.isCompleted == isCompleted)
             .toList();
         if (filtrationTask.isEmpty) {
@@ -69,54 +65,52 @@ class TasksCubit extends Cubit<TasksState> {
         return filtrationTask;
       case Filtration.isFavorite:
         emit(FiltrationDataLoadingState());
-        filtrationTask =
-            allTasks.where((element) => element.isFavorite == isFavorite).toList();
+        filtrationTask = allTasks
+            .where((element) => element.isFavorite == isFavorite)
+            .toList();
         if (filtrationTask.isEmpty) {
-          emit( const FiltrationDataErrorState(msg: 'No Tasks'));
+          emit(const FiltrationDataErrorState(msg: 'No Tasks'));
         } else {
           emit(FiltrationDataSuccessState(filtrationTask));
         }
         return filtrationTask;
       case Filtration.isDate:
         emit(FiltrationDataLoadingState());
-        filtrationTask =
-            allTasks.where((element) {
-              debugPrint('date = $strDateSchedule');
-              debugPrint('element.date = ${element.date}');
-              return element.date == strDateSchedule;
-            } ).toList();
+        filtrationTask = allTasks.where((element) {
+          debugPrint('date = $strDateSchedule');
+          debugPrint('element.date = ${element.date}');
+          return element.date == strDateSchedule;
+        }).toList();
         debugPrint('filtrationTask = $filtrationTask');
         if (filtrationTask.isNotEmpty) {
           emit(FiltrationDataSuccessState(filtrationTask));
         } else {
-          emit( const FiltrationDataErrorState(msg: 'No Tasks'));
+          emit(const FiltrationDataErrorState(msg: 'No Tasks'));
         }
         return filtrationTask;
     }
   }
 
-////////////////////////
-  bool isChecked = false;
+  bool isCompleted = false;
   bool completesState({bool? value, int? id}) {
     emit(TasksInitial());
     if (value == null) {
-      isChecked = isChecked;
+      isCompleted = isCompleted;
       emit(CompletesState());
     } else {
-      isChecked = value;
+      isCompleted = value;
       emit(CompletesState());
     }
 
-    return isChecked;
+    return isCompleted;
   }
 
-  bool reversIsChecked() {
+  bool reversIsCompleted() {
     emit(TasksInitial());
-    isChecked = !isChecked;
+    isCompleted = !isCompleted;
     emit(ReversIsCheckedState());
-    return isChecked;
+    return isCompleted;
   }
-  ////////////////////////////
 
   bool isFavorite = false;
   bool reversIsFavorite() {
@@ -126,8 +120,6 @@ class TasksCubit extends Cubit<TasksState> {
     return isFavorite;
   }
 
-  ////////////////////////////
-
   late String remindDropdownValue;
   getDropDownValue(String value) {
     emit(TasksInitial());
@@ -136,7 +128,6 @@ class TasksCubit extends Cubit<TasksState> {
     return remindDropdownValue;
   }
 
-  //////////////////////////
   int? selectedColor;
 
   getSelectedColor(int index) {
@@ -163,7 +154,6 @@ class TasksCubit extends Cubit<TasksState> {
     }
   }
 
-////////////////////////////
   DateTime selectedDate = DateTime.now();
   String startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
   String endTime = DateFormat('hh:mm a')
@@ -227,7 +217,8 @@ class TasksCubit extends Cubit<TasksState> {
     endTimeController!.text = endTime;
     emit(GetEndDateFromUserState());
   }
- late List<TaskEntity> allTasks;
+
+  late List<TaskEntity> allTasks;
   Future<void> getTasks() async {
     emit(GetDataLoadingState());
     Either<Failure, List<TaskEntity>> response = await getAllTaskUseCase();
@@ -251,7 +242,7 @@ class TasksCubit extends Cubit<TasksState> {
       endTime: endTime,
       remind: selectedNumberRemind,
       color: selectedColor,
-      isCompleted: isChecked ? 1 : 0,
+      isCompleted: isCompleted ? 1 : 0,
       isFavorite: isFavorite ? 1 : 0,
     );
     Either<Failure, Unit> response = await addTaskUseCase(task);
@@ -269,9 +260,10 @@ class TasksCubit extends Cubit<TasksState> {
     );
   }
 
-  Future<void> updateTask(TaskEntity task) async {
+  Future<void> updateTask({int? isCompleted, int? isFavorite, int? id}) async {
     emit(AddOrDeleteOrUpdateLoadingState());
-    Either<Failure, Unit> response = await updateTaskUseCase(task);
+    Either<Failure, Unit> response = await updateTaskUseCase(
+        isCompleted: isCompleted, isFavorite: isFavorite, id: id);
     emit(response.fold(
       (failure) => AddOrDeleteOrUpdateErrorState(
         msg(failure),

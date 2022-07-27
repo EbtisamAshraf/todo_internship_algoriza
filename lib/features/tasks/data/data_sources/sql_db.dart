@@ -40,8 +40,6 @@ class SqlDB {
   }
 
   onCreate(Database database, int version) async {
-
-
       await database.execute('''
  create table $tableName ( 
   ${columns['id']} integer primary key autoincrement not null, 
@@ -56,8 +54,6 @@ class SqlDB {
   )
 ''');
       debugPrint('onCreate...................');
-
-
   }
 
   readData() async {
@@ -74,7 +70,7 @@ class SqlDB {
     return response;
   }
 
-  updateData(TaskModel task) async {
+  updateData({ int? isCompleted,  int? isFavorite,  int? id}) async {
     Database? myDatabase = await database;
     int response = await myDatabase!.rawUpdate('''
       UPDATE $tableName
@@ -83,30 +79,15 @@ class SqlDB {
       WHERE
            ${columns['id']} = ?
     ''',
-    [task.isCompleted,task.isFavorite,task.id]);
-    //  int response = await myDatabase!.update(tableName, task.toJson(),where: '${columns['id']}= ?',whereArgs: [task.id] );
+    [isCompleted,isFavorite,id]);
     return response;
   }
 
-  // updateIsFavorite(TaskModel task) async {
-  //   Database? myDatabase = await database;
-  //   int response = await myDatabase!.rawUpdate('''
-  //     UPDATE $tableName
-  //     SET ${columns['isFavorite']} = ?
-  //
-  //     WHERE
-  //          ${columns['id']} = ?
-  //   ''',
-  //       [task.isFavorite,task.id]);
-  //   //  int response = await myDatabase!.update(tableName, task.toJson(),where: '${columns['id']}= ?',whereArgs: [task.id] );
-  //   return response;
-  // }
+
 
   deleteData(int? taskId) async {
     Database? myDatabase = await database;
     int response = await myDatabase!.delete(tableName,where:'${columns['id']}= ?',whereArgs: [taskId] );
-    // int response = await myDatabase!
-    //     .rawDelete('''DELETE FROM $tableName WHERE ${columns['id']}= $taskId''');
     return response;
   }
 

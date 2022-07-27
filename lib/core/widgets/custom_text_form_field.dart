@@ -3,7 +3,12 @@ import 'package:todo_internship_algoriza/core/utils/app_colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField(
-      {Key? key, required this.title, this.hintText, this.suffixIcon,this.controller,this.validator})
+      {Key? key,
+      required this.title,
+      this.hintText,
+      this.suffixIcon,
+      this.controller,
+      this.validator})
       : super(key: key);
   final String title;
   final String? hintText;
@@ -25,7 +30,7 @@ class CustomTextFormField extends StatelessWidget {
         ),
         TextFormField(
           controller: controller,
-          cursorColor:AppColors.primaryColor,
+          cursorColor: AppColors.primaryColor,
           decoration: InputDecoration(
             hintText: hintText,
             suffixIcon: suffixIcon,
@@ -41,13 +46,15 @@ class CustomTextFormField extends StatelessWidget {
               borderSide: BorderSide(
                 color: AppColors.primaryColor.withOpacity(0.5),
               ),
-            ) ,
+            ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           ),
           validator: validator,
         ),
-        const SizedBox(height: 25,),
+        const SizedBox(
+          height: 25,
+        ),
       ],
     );
   }

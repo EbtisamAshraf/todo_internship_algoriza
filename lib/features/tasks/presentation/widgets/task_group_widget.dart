@@ -42,11 +42,12 @@ class TaskGroupWidget extends StatelessWidget {
         } else if (state is GetDataErrorState || state is FiltrationDataErrorState ) {
           return const CustomErrorWidget(msg: 'No Tasks');
         } else if (state is GetDataLoadedState || state is FiltrationDataSuccessState || state is GetSelectedDateSchedule ) {
-          // if(isFiltration) {
-          //   TasksCubit.get(context).getFiltrationTask(
-          //     task: TasksCubit.get(context).allTasks,
-          //     filtration: filtration,
-          //   );}
+          isFiltration ?
+            TasksCubit.get(context).getFiltrationTask(
+              filtration: filtration,
+              isFavorite: isFavorite,
+              isCompleted: isCompleted,
+            ) : null ;
 
 
           return SizedBox(

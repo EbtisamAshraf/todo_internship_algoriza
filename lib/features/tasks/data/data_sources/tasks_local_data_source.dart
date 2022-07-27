@@ -7,7 +7,7 @@ import 'package:todo_internship_algoriza/features/tasks/domain/entities/task_ent
 abstract class TasksLocalDataSource {
   Future<List<TaskEntity>> getAllTask();
   Future<Unit> deleteTask(int? taskId);
-  Future<Unit> updateTask(TaskModel task);
+  Future<Unit> updateTask({ int? isCompleted,  int? isFavorite,  int? id});
   Future<Unit> addTask(TaskModel task);
 }
 
@@ -49,8 +49,8 @@ class TasksLocalDataSourceImpl implements TasksLocalDataSource {
   }
 
   @override
-  Future<Unit> updateTask(TaskModel task) async {
-    int response = await sqlDB.updateData(task);
+  Future<Unit> updateTask({ int? isCompleted,  int? isFavorite,  int? id}) async {
+    int response = await sqlDB.updateData(isCompleted:isCompleted ,isFavorite: isFavorite,id:id );
     if (response == 1) {
       return Future.value(unit);
     } else {

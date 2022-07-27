@@ -4,7 +4,6 @@ import 'package:todo_internship_algoriza/app.dart';
 import 'package:todo_internship_algoriza/core/utils/bloc_observer.dart';
 import 'package:todo_internship_algoriza/injection_container.dart'as di ;
 
-import 'features/tasks/data/data_sources/sql_db.dart';
 
 
 void main() async{

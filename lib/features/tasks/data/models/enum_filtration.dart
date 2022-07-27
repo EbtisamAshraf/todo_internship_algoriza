@@ -1,2 +1,2 @@
 
-enum Filtration {isCompleted , isFavorite ,isDate}
+enum Filtration {isCompleted , isFavorite ,isDate, none}

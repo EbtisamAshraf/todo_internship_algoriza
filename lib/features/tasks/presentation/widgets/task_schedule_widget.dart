@@ -9,7 +9,6 @@ class TaskScheduleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      // onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
 
@@ -18,7 +17,8 @@ class TaskScheduleWidget extends StatelessWidget {
         width: double.infinity,
 
         decoration: BoxDecoration(
-            color: Colors.orange, borderRadius: BorderRadius.circular(15.0)),
+            color: TasksCubit.get(context).getColor(task.color),
+            borderRadius: BorderRadius.circular(15.0)),
 
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -28,27 +28,35 @@ class TaskScheduleWidget extends StatelessWidget {
               children: [
                 Text(
                   task.startTime.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontWeight: FontWeight.bold,color: Colors.white),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   task.taskTitle,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
                 ),
               ],
             ),
-            Checkbox(
-              value: task.isCompleted == 1 ? true :false,
-              onChanged:(_){},
-              checkColor: TasksCubit.get(context).getColor(task.color),
-              activeColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              side:  BorderSide(color:TasksCubit.get(context).getColor(task.color), width: 2),
-            ),
+            Container(
+                height: 25,
+                width: 25,
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                    )),
+                child: task.isCompleted == 1
+                    ? const Icon(
+                        Icons.done,
+                        color: Colors.white,
+                        size: 20,
+                      )
+                    : null)
           ],
         ),
       ),
