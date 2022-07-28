@@ -4,6 +4,7 @@ import 'package:todo_internship_algoriza/core/widgets/custom_button.dart';
 import 'package:todo_internship_algoriza/features/tasks/data/models/enum_filtration.dart';
 import 'package:todo_internship_algoriza/features/tasks/presentation/cubit/tasks_cubit.dart';
 import 'package:todo_internship_algoriza/features/tasks/presentation/widgets/task_group_widget.dart';
+import 'package:todo_internship_algoriza/notification_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,11 +15,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
+  late NotifyHelper notifyHelper;
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
     TasksCubit.get(context).getTasks();
+    notifyHelper = NotifyHelper();
+    notifyHelper.requestIOSPermissions();
+    notifyHelper.initializeNotification(context);
+
   }
 
   @override
@@ -61,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             TaskGroupWidget(
               isFiltration: false,
               isSchedule: false,
+              notifyHelper: notifyHelper,
             ),
             TaskGroupWidget(
               isFiltration: true,

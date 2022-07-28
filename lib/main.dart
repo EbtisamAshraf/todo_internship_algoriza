@@ -6,10 +6,11 @@ import 'package:todo_internship_algoriza/injection_container.dart'as di ;
 
 
 
+
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-
-   await di.init();
+  await di.init();
   BlocOverrides.runZoned(
         () {
       runApp(const ToDoApp());

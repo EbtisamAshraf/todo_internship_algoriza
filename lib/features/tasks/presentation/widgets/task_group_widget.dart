@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_internship_algoriza/core/utils/constants.dart';
 import 'package:todo_internship_algoriza/core/utils/media_query_values.dart';
 import 'package:todo_internship_algoriza/core/widgets/custom_error_widget.dart';
@@ -8,6 +9,7 @@ import 'package:todo_internship_algoriza/features/tasks/data/models/enum_filtrat
 import 'package:todo_internship_algoriza/features/tasks/presentation/cubit/tasks_cubit.dart';
 import 'package:todo_internship_algoriza/features/tasks/presentation/widgets/task_board_widget.dart';
 import 'package:todo_internship_algoriza/features/tasks/presentation/widgets/task_schedule_widget.dart';
+import 'package:todo_internship_algoriza/notification_services.dart';
 
 class TaskGroupWidget extends StatelessWidget {
   TaskGroupWidget({
@@ -18,6 +20,7 @@ class TaskGroupWidget extends StatelessWidget {
     this.isCompleted,
     this.isFavorite,
     this.date,
+    this.notifyHelper,
   }) : super(key: key);
 
   final bool isFiltration;
@@ -26,6 +29,7 @@ class TaskGroupWidget extends StatelessWidget {
   final int? isCompleted;
   final int? isFavorite;
   final String? date;
+  final NotifyHelper? notifyHelper;
 
   @override
   Widget build(BuildContext context) {
@@ -36,30 +40,44 @@ class TaskGroupWidget extends StatelessWidget {
         }
       },
       builder: (context, state) {
-
-        if (state is GetDataLoadingState || state is FiltrationDataLoadingState ) {
+        if (state is GetDataLoadingState ||
+            state is FiltrationDataLoadingState) {
           return const CustomLoadingWidget();
-        } else if (state is GetDataErrorState || state is FiltrationDataErrorState ) {
+        } else if (state is GetDataErrorState ||
+            state is FiltrationDataErrorState) {
           return const CustomErrorWidget(msg: 'No Tasks');
-        } else if (state is GetDataLoadedState || state is FiltrationDataSuccessState || state is GetSelectedDateSchedule ) {
-          isFiltration ?
-            TasksCubit.get(context).getFiltrationTask(
-              filtration: filtration,
-              isFavorite: isFavorite,
-              isCompleted: isCompleted,
-            ) : null ;
-
+        } else if (state is GetDataLoadedState ||
+            state is FiltrationDataSuccessState ||
+            state is GetSelectedDateSchedule) {
+          isFiltration
+              ? TasksCubit.get(context).getFiltrationTask(
+                  filtration: filtration,
+                  isFavorite: isFavorite,
+                  isCompleted: isCompleted,
+                )
+              : null;
 
           return SizedBox(
             height: context.height,
             child: ListView.builder(
-                itemBuilder: (context, index) => isSchedule
-                    ?  TaskScheduleWidget(task: TasksCubit.get(context).allTasks[index],)
-                    : TaskBoardWidget(
-                        task: isFiltration
-                            ? TasksCubit.get(context).filtrationTask[index]
-                            : TasksCubit.get(context).allTasks[index],
-                      ),
+                itemBuilder: (context, index) {
+                  var date = DateFormat.jm().parse(
+                      TasksCubit.get(context).allTasks[index].startTime ?? '10:30');
+                  var myTime = DateFormat('HH:mm').format(date);
+                  notifyHelper?.scheduledNotification(
+                      int.parse(myTime.toString().split(':')[0]),
+                      int.parse(myTime.toString().split(':')[1]),
+                      TasksCubit.get(context).allTasks[index]);
+                  return isSchedule
+                      ? TaskScheduleWidget(
+                          task: TasksCubit.get(context).allTasks[index],
+                        )
+                      : TaskBoardWidget(
+                          task: isFiltration
+                              ? TasksCubit.get(context).filtrationTask[index]
+                              : TasksCubit.get(context).allTasks[index],
+                        );
+                },
                 itemCount: isFiltration
                     ? TasksCubit.get(context).filtrationTask.length
                     : TasksCubit.get(context).allTasks.length),
